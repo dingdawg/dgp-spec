@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dgp.dev/schemas/v1.0/AuditEntry.schema.json",
+  "title": "DGP.AuditEntry",
+  "description": "An entry in the tamper-evident, hash-chained audit trail.",
+  "type": "object",
+  "required": ["dgp_version", "sequence_number", "entry_id", "receipt_id", "actor", "action", "resource", "previous_hash", "entry_hash", "timestamp"],
+  "properties": {
+    "dgp_version": { "type": "string", "const": "1.0" },
+    "sequence_number": { "type": "integer", "minimum": 1 },
+    "entry_id": { "type": "string", "format": "uuid" },
+    "receipt_id": { "type": "string", "pattern": "^rcpt_[a-f0-9]{16}$" },
+    "actor": { "type": "string", "minLength": 1, "maxLength": 256 },
+    "action": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "resource": { "type": "string", "minLength": 1, "maxLength": 2048 },
+    "details": { "type": "object", "default": {} },
+    "previous_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "Genesis block: 64 zeros. All others: prior entry_hash."
+    },
+    "entry_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 of canonical JSON (sorted keys, compact separators)"
+    },
+    "timestamp": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

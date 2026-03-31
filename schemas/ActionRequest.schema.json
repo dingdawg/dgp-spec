@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dgp.dev/schemas/v1.0/ActionRequest.schema.json",
+  "title": "DGP.ActionRequest",
+  "description": "An atomic unit of agent behavior submitted for governance evaluation.",
+  "type": "object",
+  "required": ["dgp_version", "action_id", "action_type", "agent_id", "resource", "timestamp"],
+  "properties": {
+    "dgp_version": { "type": "string", "const": "1.0" },
+    "action_id": { "type": "string", "format": "uuid", "description": "UUID v4, globally unique identifier" },
+    "action_type": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_.]{0,127}$",
+      "description": "Dot-notation action hierarchy. Example: db.write.users"
+    },
+    "agent_id": { "type": "string", "minLength": 1, "maxLength": 256 },
+    "resource": { "type": "string", "minLength": 1, "maxLength": 2048 },
+    "parameters": { "type": "object", "default": {} },
+    "context": {
+      "type": "object",
+      "properties": {
+        "session_id": { "type": "string" },
+        "user_id": { "type": "string" },
+        "environment": { "enum": ["production", "staging", "development", "test"] },
+        "tenant_id": { "type": "string" },
+        "parent_action_id": { "type": "string", "format": "uuid" }
+      }
+    },
+    "budget": {
+      "type": "object",
+      "properties": {
+        "max_spend": { "type": "string", "pattern": "^\\$[0-9]+\\.[0-9]{2}$" },
+        "currency": { "type": "string", "default": "USD" }
+      }
+    },
+    "timestamp": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dgp.dev/schemas/v1.0/ExecutionReceipt.schema.json",
+  "title": "DGP.ExecutionReceipt",
+  "description": "Cryptographically signed, hash-chained proof of governed execution.",
+  "type": "object",
+  "required": ["dgp_version", "receipt_id", "action_id", "decision_id", "agent_id", "action_type", "resource", "outcome", "chain_hash", "prev_hash", "signature", "timestamp"],
+  "properties": {
+    "dgp_version": { "type": "string", "const": "1.0" },
+    "receipt_id": {
+      "type": "string",
+      "pattern": "^rcpt_[a-f0-9]{16}$",
+      "description": "Deterministic: rcpt_ + SHA-256(chain_hash + timestamp)[:16]"
+    },
+    "action_id": { "type": "string", "format": "uuid" },
+    "decision_id": { "type": "string", "format": "uuid" },
+    "agent_id": { "type": "string" },
+    "action_type": { "type": "string" },
+    "resource": { "type": "string" },
+    "outcome": { "enum": ["success", "failure", "partial"] },
+    "output_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 of the action output artifact"
+    },
+    "duration_ms": { "type": "integer", "minimum": 0 },
+    "chain_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 of canonical JSON of this receipt"
+    },
+    "prev_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "Previous receipt chain_hash. Genesis: 64 zeros"
+    },
+    "signature": {
+      "type": "string",
+      "description": "HMAC-SHA256 or ECDSA-P256, base64url encoded"
+    },
+    "signature_algorithm": {
+      "enum": ["hmac-sha256", "ecdsa-p256"],
+      "default": "hmac-sha256"
+    },
+    "rollback_available": { "type": "boolean" },
+    "timestamp": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}
